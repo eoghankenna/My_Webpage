@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Eoghan Kenna — Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style/style.css">
+    <style>
+      :root {
+        --bg: #0a0a0f;
+        --panel: rgba(18, 18, 26, 0.82);
+        --panel-border: rgba(255, 255, 255, 0.08);
+        --text: #eaeaf0;
+        --muted: #9a9aae;
+        --accent: #b5c98a;
+        --accent-2: #d4e2b0;
+        --accent-glow: rgba(181, 201, 138, 0.35);
+        --radius: 16px;
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0;
+        overflow-x: hidden;
+        background-color: var(--bg);
+        color: var(--text);
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      #canvas {
+        z-index: -1;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw !important;
+        height: 100vh !important;
+        display: block;
+      }
+
+      #taskbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        padding: 14px 24px;
+        background: rgba(10, 10, 15, 0.72);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--panel-border);
+        margin-bottom: 0 !important;
+      }
+
+      .taskbar-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .nav-btn {
+        background: transparent;
+        color: var(--text);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        padding: 10px 22px;
+        border: 1px solid var(--panel-border);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      .nav-btn:hover {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #0a0a0f;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px var(--accent-glow);
+      }
+
+      #download_button {
+        background-color: #b5c98a;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        padding: 10px 22px;
+        border: 1px solid var(--panel-border);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      section, .section-block {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      .section-title {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: clamp(1.8rem, 4vw, 2.6rem);
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        margin: 0 0 8px 0;
+        color: #fff;
+      }
+
+      .section-subtitle {
+        font-family: 'JetBrains Mono', monospace;
+        color: var(--accent);
+        font-size: 13px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin: 0 0 24px 0;
+      }
+
+      .about-section {
+        padding-top: 140px;
+        padding-bottom: 100px;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .about-section .eyebrow {
+        font-family: 'JetBrains Mono', monospace;
+        color: var(--accent);
+        font-size: 13px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+      }
+
+      .about-section h1 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: clamp(2.2rem, 6vw, 4rem);
+        font-weight: 700;
+        letter-spacing: -1px;
+        margin: 0 0 20px 0;
+        color: #fff;
+        border: none;
+        padding: 0;
+      }
+
+      .about-section .tagline {
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        color: var(--muted);
+        max-width: 720px;
+        margin: 0 auto 40px auto;
+        line-height: 1.7;
+      }
+
+      .about-card {
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        border-radius: var(--radius);
+        padding: 40px;
+        text-align: left;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      }
+
+      .about-card p {
+        font-size: 15px;
+        line-height: 1.8;
+        color: #d0d0dc;
+        margin: 0 0 18px 0;
+      }
+
+      .about-card p:last-child { margin-bottom: 0; }
+
+      .about-card strong {
+        color: #fff;
+        font-weight: 600;
+      }
+
+      .section-block {
+        padding-bottom: 120px;
+        scroll-margin-top: 100px;
+      }
+
+      .cards-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        border-radius: var(--radius);
+        padding: 32px;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+        transition: transform 0.3s ease, border-color 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(181, 201, 138, 0.5);
+      }
+
+      .card h3 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.15rem;
+        color: #fff;
+        margin: 0 0 20px 0;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--panel-border);
+      }
+
+      .skill-group {
+        margin-bottom: 20px;
+      }
+
+      .skill-group:last-child { margin-bottom: 0; }
+
+      .skill-group h4 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin: 0 0 8px 0;
+      }
+
+      .skill-group p {
+        margin: 0;
+        color: #c8c8d4;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      .tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .tag {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        padding: 5px 12px;
+        border-radius: 999px;
+        background: rgba(181, 201, 138, 0.12);
+        border: 1px solid rgba(181, 201, 138, 0.35);
+        color: var(--accent-2);
+      }
+
+      .project-card {
+        background: rgba(181, 201, 138, 0.12);
+        border: 1px solid rgba(181, 201, 138, 0.35);
+        border-radius: var(--radius);
+        padding: 32px;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      }
+
+      .project-card h3 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.3rem;
+        color: #fff;
+        margin: 0 0 6px 0;
+      }
+
+      .project-card .project-meta {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        color: var(--accent-2);
+        letter-spacing: 1px;
+        margin-bottom: 18px;
+      }
+
+      .project-card p {
+        color: #e0e0e8;
+        line-height: 1.8;
+        font-size: 14.5px;
+        margin: 0 0 20px 0;
+      }
+
+      .project-card ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .project-card li {
+        color: #d8d8e0;
+        font-size: 14px;
+        line-height: 1.7;
+        padding-left: 22px;
+        position: relative;
+        margin-bottom: 6px;
+      }
+
+      .project-card li::before {
+        content: "▹";
+        position: absolute;
+        left: 0;
+        color: var(--accent-2);
+      }
+
+      .cert-block {
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        border-radius: var(--radius);
+        padding: 28px 32px;
+        margin-bottom: 20px;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      }
+
+      .cert-block h4 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1rem;
+        color: #fff;
+        margin: 0 0 16px 0;
+      }
+
+      .cert-block h4 .badge {
+        display: inline-block;
+        font-size: 10px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: rgba(181, 201, 138, 0.15);
+        border: 1px solid rgba(181, 201, 138, 0.4);
+        color: var(--accent);
+        margin-left: 10px;
+        vertical-align: middle;
+      }
+
+      .cert-block ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .cert-block li {
+        color: #c8c8d4;
+        font-size: 14px;
+        line-height: 1.8;
+        padding-left: 22px;
+        position: relative;
+        margin-bottom: 4px;
+      }
+
+      .cert-block li::before {
+        content: "▹";
+        position: absolute;
+        left: 0;
+        color: var(--accent);
+      }
+
+      .site-footer {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        background: rgba(10, 10, 15, 0.9);
+        border-top: 1px solid var(--panel-border);
+        color: #fff;
+        padding: 50px 20px 30px 20px;
+        text-align: center;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+      }
+
+      .site-footer h3 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.1rem;
+        letter-spacing: 2px;
+        margin: 0 0 24px 0;
+        color: #fff;
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 30px;
+      }
+
+      .social-links a {
+        color: var(--text);
+        text-decoration: none;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 14px;
+        padding: 10px 24px;
+        border: 1px solid var(--panel-border);
+        border-radius: 999px;
+        transition: all 0.25s ease;
+      }
+
+      .social-links a:hover {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #0a0a0f;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px var(--accent-glow);
+      }
+
+      .footer-copy {
+        margin: 0;
+        font-size: 12px;
+        color: var(--muted);
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      @media (max-width: 640px) {
+        #taskbar { padding: 10px 12px; }
+        .nav-btn { font-size: 12px; padding: 8px 14px; }
+        .about-section { padding-top: 120px; }
+        .about-card { padding: 24px; }
+        .card, .project-card, .cert-block { padding: 22px; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <div id="taskbar">
+      <div class="taskbar-inner">
+        <button class="nav-btn" onclick="document.getElementById('about').scrollIntoView({ behavior: 'smooth' })">About</button>
+        <button class="nav-btn" onclick="document.getElementById('web-dev').scrollIntoView({ behavior: 'smooth' })">Web Development</button>
+        <button class="nav-btn" onclick="document.getElementById('mobile-dev').scrollIntoView({ behavior: 'smooth' })">Mobile App</button>
+        <button class="nav-btn" onclick="document.getElementById('certs').scrollIntoView({ behavior: 'smooth' })">Certifications</button>
+      </div>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <section class="about-section" id="about">
+      <div class="eyebrow">Software Design &amp; AI Student</div>
+      <h1>Eoghan Kenna</h1>
+      <p class="tagline">
+        Full-stack developer based in Tullamore, Co. Offaly — building across web,
+        mobile, cloud, and AI.
+      </p>
+
+      <div class="about-card">
+        <p>
+          I'm a second-year <strong>BSc (Hons) Software Design for Artificial Intelligence
+          for Cloud Computing</strong> student at Technological University of the Shannon
+          (TUS), Athlone. I have a strong interest in full-stack development, mobile
+          applications, cloud computing, and AI.
+        </p>
+        <p>
+          I have a solid technical foundation in systems and networking, and I'm currently
+          working towards <strong>CompTIA Server+</strong> and <strong>Network+</strong>
+          certifications. My toolkit spans frontend technologies like HTML, CSS, JavaScript,
+          TypeScript, React, and Three.js; backend languages and frameworks including Java,
+          Python, SQL, Node.js, Spring Boot, and Flask; mobile development with Dart and
+          Flutter; and cloud platforms such as Microsoft Azure and Firebase.
+        </p>
+        <p>
+          I'm currently building <strong>Tabby</strong>, an all-in-one Flutter toolkit for
+          musicians that focuses on production-level architecture and real-time audio —
+          you can read more about it in the Mobile App Development section below.
+        </p>
+        <a href="/Document 6 (1).docx" download="My_Resume">
+          <button id="download_button">Donwload My Resume</button>
+        </a>
+      </div>
+    </section>
+
+    <div class="section-block" id="web-dev">
+      <p class="section-subtitle">01 — Web</p>
+      <h2 class="section-title">Web Development</h2>
+
+      <div class="cards-row">
+        <div class="card">
+          <h3>Frontend</h3>
+          <div class="skill-group">
+            <h4>Languages</h4>
+            <div class="tag-list">
+              <span class="tag">HTML</span>
+              <span class="tag">CSS</span>
+              <span class="tag">W3CSS</span>
+              <span class="tag">JavaScript</span>
+              <span class="tag">TypeScript</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4>Libraries</h4>
+            <div class="tag-list">
+              <span class="tag">React</span>
+              <span class="tag">Three.js</span>
+              <span class="tag">Vite</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Backend</h3>
+          <div class="skill-group">
+            <h4>Languages</h4>
+            <div class="tag-list">
+              <span class="tag">Python</span>
+              <span class="tag">Java</span>
+              <span class="tag">SQL</span>
+              <span class="tag">MySQL</span>
+              <span class="tag">XML</span>
+              <span class="tag">PHP</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4>Frameworks &amp; Runtime</h4>
+            <div class="tag-list">
+              <span class="tag">Node.js</span>
+              <span class="tag">Spring Boot</span>
+              <span class="tag">Flask</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4>Cloud Services</h4>
+            <div class="tag-list">
+              <span class="tag">Microsoft Azure</span>
+              <span class="tag">Firebase</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block" id="mobile-dev">
+      <p class="section-subtitle">02 — Mobile</p>
+      <h2 class="section-title">Mobile App Development</h2>
+
+      <div class="cards-row">
+        <div class="card">
+          <h3>Competencies</h3>
+          <div class="skill-group">
+            <h4>Languages</h4>
+            <div class="tag-list">
+              <span class="tag">Dart</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4>Framework</h4>
+            <div class="tag-list">
+              <span class="tag">Flutter</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h4>Tools</h4>
+            <div class="tag-list">
+              <span class="tag">Android Studio</span>
+              <span class="tag">GitHub</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <h3>Tabby</h3>
+          <p class="project-meta">Flutter &amp; Dart · Active Development</p>
+          <p>
+            An all-in-one Flutter toolkit for musicians, focused on production-level
+            architecture and real-time audio. Tabby combines a real-time chromatic tuner,
+            a dynamic tablature viewer, and a mathematically-driven music theory engine
+            that maps scales, intervals, and chord structures.
+          </p>
+          <ul>
+            <li>Implementing real-time audio and interactive functionality</li>
+            <li>Building custom rendering and UI components</li>
+            <li>Applying production-level architecture and development practices</li>
+            <li>Source code will soon be available on GitHub</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block" id="certs">
+      <p class="section-subtitle">03 — Credentials</p>
+      <h2 class="section-title">Certifications</h2>
+
+      <div class="cert-block">
+        <h4>CompTIA Server+ <span class="badge">Enrolled</span></h4>
+        <ul>
+          <li>Server hardware, RAID, storage, hot-swappable components</li>
+          <li>Server OS installation, configuration, administration</li>
+          <li>Virtualisation and cloud service models (IaaS, PaaS, SaaS)</li>
+          <li>Security hardening, encryption, backup, disaster recovery</li>
+          <li>Hardware, OS, network, and storage troubleshooting</li>
+        </ul>
+      </div>
+
+      <div class="cert-block">
+        <h4>CompTIA Network+ <span class="badge">Enrolled</span></h4>
+        <ul>
+          <li>TCP/IP, DNS, DHCP, routing, switching, VLANs</li>
+          <li>Network infrastructure, cabling, wireless standards</li>
+          <li>Network monitoring and fault tolerance</li>
+          <li>Firewalls, VPNs, access control, network security</li>
+          <li>Physical and logical network troubleshooting</li>
+        </ul>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <h3>CONNECT WITH ME</h3>
+      <div class="social-links">
+        <a href="https://instagram.com/kennaeoghan" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://facebook.com/EoghanKenna" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://github.com/eoghankenna" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="footer-copy">&copy; 2025 Eoghan Kenna.</p>
+    </footer>
+
+    <script type="module" src="./scripts/main.js"></script>
+
+  </body>
+</html>
