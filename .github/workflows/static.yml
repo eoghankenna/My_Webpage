@@ -44,6 +44,9 @@ jobs:
       - name: Build app
         run: npm run build
 
+      - name: Copy Word document
+        run: cp "public/Document 6 (1) (1).docx" "dist/Document 6 (1) (1).docx"
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
